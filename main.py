@@ -21,18 +21,22 @@ options.add_argument("user-data-dir=C:\\webdriver\\selenium")
 PATH = 'C:\webdriver\chromedriver.exe'
 browser = webdriver.Chrome (options=options, executable_path=PATH) # (executable_path = PATH)
 browser.get(url)
-
+browser.maximize_window()
 palavra = password.username
 senha = password.password
 
-def foto():
+def foto(image):
     ''' 
     Nesta função será possível inserir as imagens no anúncio.
     '''
-    # teste de commit
-    ad_foto = browser.find_element_by_xpath('//*[@id="group-image-container"]/div[2]/div[2]/span[1]')
-
-    pass
+    import pyautogui
+    browser.find_element_by_xpath('//*[@id="group-image-container"]/div[2]/div[2]/span[2]').click()
+    sleep(6)
+    pyautogui.write(r'C:\Users\homel\Olx-app\olx-app\foto.JPG', interval = 0.25)
+    pyautogui.press('return')
+    print('Foto enviada')
+    sleep(20)
+    
 
 
 def texto():
@@ -96,10 +100,14 @@ def anuncio():
         print('preco')
         sleep(3)
         browser.find_element_by_xpath('//*[@id="cookie-notice-ok-button"]').click() # Aceito cookies
+        foto('foto.JPG')
+        print('foto enviada')
+        '''
         enviar_anuncio.click()
         sleep(20)
         print('sem destaque')
         browser.find_element_by_xpath('//*[@id="root"]/section/div/a').click() # Nao aceito pagar pelo anuncio
+        '''
     print('Anuncio ended')
 
 
