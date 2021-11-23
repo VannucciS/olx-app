@@ -67,20 +67,22 @@ preco = int(input('Digite o valor do que vai ser vendido: '))
 from tkinter import filedialog
 from PIL import Image, ImageTk
 
-def foto(num):
+def foto():
     # https://stackoverflow.com/questions/22802989/displaying-the-selected-image-using-tkinter
+    # https://stackoverflow.com/questions/56374895/open-a-image-file-then-display-it-in-new-window
     filename = filedialog.askopenfilename()
     im = Image.open(filename)
     tkimage = ImageTk.PhotoImage(im)
     myvar = Label(mainframe, image= tkimage)
     myvar.image = tkimage
-    myvar.grid(column=num, row=10, sticky=w)
+    myvar.maxsize(50,50)
+    myvar.grid(column=1, row=10, sticky=W)
     
 
 
 #image1 = PhotoImage(file=)
 ttk.Label(mainframe, text = "Selecione a(s) foto(s)").grid(column=1, row=9, sticky=W)
-ttk.Button(mainframe, text = "Selecionar foto", command= foto(1)).grid(column=2, row=13, sticky=E)
+ttk.Button(mainframe, text = "Selecionar foto", command= foto).grid(column=2, row=13, sticky=E)
 
 ttk.Button(mainframe, text = "Gravar", command= gravar).grid(column=3, row=14, sticky=E)
 
