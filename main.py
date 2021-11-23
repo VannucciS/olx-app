@@ -32,7 +32,7 @@ def foto(image):
     import pyautogui
     browser.find_element_by_xpath('//*[@id="group-image-container"]/div[2]/div[2]/span[2]').click()
     sleep(6)
-    pyautogui.write(r'C:\Users\homel\Olx-app\olx-app\foto.JPG', interval = 0.25)
+    pyautogui.write(image, interval = 1)
     pyautogui.press('return')
     print('Foto enviada')
     sleep(20)
@@ -45,8 +45,8 @@ def texto():
     '''
     # Criar uma dbase em sql armazenar texto e fotos
     
-    titulo = str(input('Digite o título do seu anúncio: '))
-    descricao = str(input('Digite a descrição do anúncio: '))
+    entry_title = str(input('Digite o título do seu anúncio: '))
+    entry_decription = str(input('Digite a descrição do anúncio: '))
     
     cat= ''# informe a categoria
     sub_cat = ''
@@ -100,7 +100,7 @@ def anuncio():
         print('preco')
         sleep(3)
         browser.find_element_by_xpath('//*[@id="cookie-notice-ok-button"]').click() # Aceito cookies
-        foto('foto.JPG')
+        foto(r'C:\Users\homel\Olx-app\olx-app\foto.JPG')
         print('foto enviada')
         '''
         enviar_anuncio.click()
