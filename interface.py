@@ -22,7 +22,6 @@ title_entry.grid(column=1, row=2, sticky=(W, E))
 
 ttk.Label(mainframe, text = "Descrição do anúncio").grid(column=1, row=3, sticky=W)
 t = Text(mainframe, width=40, height=10)
-t['state'] = 'disabled'
 t.grid(column=1, row=4, sticky=(W, E))
 contents = t.get('1.0', 'end')
 
@@ -38,24 +37,61 @@ preco_entry = ttk.Entry(mainframe, width=5, textvariable=preco)
 #ttk.Label(mainframe, text = "R$").grid(column=1, row=6, sticky=W)
 preco_entry.grid(column=1, row=6, sticky=(W,E))
 
-# categoria deve ser um dropdown box
+# https://www.youtube.com/watch?v=bH9r3wM9Idw
+# Dependend drop down menu
+
+categories = [
+    "Imóveis", 
+    "Música e hobbies", 
+    "Esporte e lazer"
+]
+
+cat_imoveis = [
+    'Apartamentos', 
+    'Casas', 
+    'Aluguel de quartos', 
+    'Temporada', 
+    'Terrenos, sítios e fazendas',
+    'Comércio e indústria'
+]
+
+cat_esporte = [
+    'Esportes e ginástica',
+    'Ciclismo'
+    ]
+cat_hobbie = [
+    'Instrumentos musicais',
+    'CDs, DVDs etc',
+    'Livros e revistas',
+    'Antiguidades',
+    'Hobbies e coleções'
+]
+def pick_category(e):
+    if category.get() == 'Imóveis':
+        sub_category.config(value = cat_imoveis)
+        sub_category.current(0)
+    if category.get() == "Música e hobbies":
+        sub_category.config(value = cat_hobbie)
+        sub_category.current(0)
+    if category.get() == "Esporte e lazer":
+        sub_category.config(value = cat_esporte)
+        sub_category.current(0)
+
+
 ttk.Label(mainframe, text = "Selecione uma categoria").grid(column=1, row=7, sticky=W)
-categoryvar = StringVar()
-category = ttk.Combobox(mainframe, textvariable=categoryvar)
-category.bind('<<ComboboxSelected>>', gravar)
-category['values'] = ('Imóveis', 'Autos e peças', 'Para a sua casa', 'Eletrônicos e celulares', 'Música e hobbies', 'Esporte e lazer', 'Artigos infantis', 'Animais de estimação',
-                        'Moda e beleza')
+category = ttk.Combobox(mainframe, value= categories) 
+category.current(0)
 category.state(['readonly'])
 category.grid(column=1, row=8, sticky=W)
+category.bind('<<ComboboxSelected>>', pick_category)
+
+
 
 # Subcategoria deve ser um dropdow box
 ttk.Label(mainframe, text = "Selecione uma sub-categoria").grid(column=2, row=7, sticky=W)
-sub_categoryvar = StringVar()
-sub_category = ttk.Combobox(mainframe, textvariable=sub_categoryvar)
-sub_category.bind('<<ComboboxSelected>>', gravar)
-sub_category['values'] = ('Imóveis', 'Autos e peças', 'Para a sua casa', 'Eletrônicos e celulares', 'Música e hobbies', 'Esporte e lazer', 'Artigos infantis', 'Animais de estimação',
-                        'Moda e beleza')
-sub_category.state(['readonly'])
+sub_category = ttk.Combobox(mainframe, value = [" "] )
+sub_category.current(0)
+sub_category.bind('<<ComboboxSelected>>', pick_category)
 sub_category.grid(column=2, row=8, sticky=W)
 '''
 entry_decription = str(input('Digite a descrição do anúncio: '))
@@ -72,12 +108,20 @@ def foto():
     # https://stackoverflow.com/questions/56374895/open-a-image-file-then-display-it-in-new-window
     filename = filedialog.askopenfilename()
     im = Image.open(filename)
+    im = im.resize((100,100), Image.ANTIALIAS)
     tkimage = ImageTk.PhotoImage(im)
     myvar = Label(mainframe, image= tkimage)
     myvar.image = tkimage
-    myvar.maxsize(50,50)
     myvar.grid(column=1, row=10, sticky=W)
     
+'''
+FALTA FAZER:
+* SALVAR MULTIPLAS FOTOS
+* SALVAR O ANUNCIO EM UM BASE DE DADOS
+* SALVAR AS FOTOS EM UM DIRETÓRIO ESPECÍFICO
+* LIMPAR O FORMULARIO AO CLICAR EM SALVAR
+
+'''
 
 
 #image1 = PhotoImage(file=)
