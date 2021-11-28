@@ -1,5 +1,36 @@
+from sqlite3.dbapi2 import Cursor
 from tkinter import *
 from tkinter import ttk
+import sqlite3
+
+con = sqlite3.connect("anuncios.bd")
+cursor = con.cursor()
+
+def desconecta_db():
+    con.close()
+
+def monta_tabelas():
+    print('Conectando ao banco de dados')
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS anuncios
+    (
+        cod INTEGER PRIMARY KEY, 
+        titulo CHAR(40) NOT NULL, 
+        texto CHAR(200), 
+        preco INTEGER(8),   
+        foto1 CHAR(200),
+        foto2 CHAR(200),
+        foto3 CHAR(200),
+        foto4 CHAR(200),
+        foto5 CHAR(200)
+        );
+    """)
+    con.commit(); print("BD criado")
+    desconecta_db()
+
+
+monta_tabelas()
+desconecta_db()
 
 def enviar():
     pass
