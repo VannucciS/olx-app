@@ -1,4 +1,4 @@
-from sqlite3.dbapi2 import Cursor
+#from sqlite3.dbapi2 import Cursor
 from tkinter import *
 from tkinter import ttk
 import sqlite3
@@ -17,7 +17,9 @@ def monta_tabelas():
         cod INTEGER PRIMARY KEY, 
         titulo CHAR(40) NOT NULL, 
         texto CHAR(200), 
-        preco INTEGER(8),   
+        preco INTEGER(8),
+        categoria CHAR(30),
+        sub_categoria CHAR(30),
         foto1 CHAR(200),
         foto2 CHAR(200),
         foto3 CHAR(200),
@@ -32,11 +34,37 @@ def monta_tabelas():
 monta_tabelas()
 desconecta_db()
 
-def enviar():
+def enviar():        
+    pass
+
+def editar():
+    pass
+
+def excluir():
     pass
 
 def gravar():
-    pass
+    con = sqlite3.connect("anuncios.bd")
+    cursor = con.cursor()
+    print("Gravando na base de dados...")
+    titulo = title_entry.get()
+    anuncio = t.get('1.0', 'end-1c')
+    preco = preco_entry.get()
+    categoria = category.get()
+    sb_categoria = sub_category.get()
+
+    cursor.execute(
+        """
+        INSERT INTO anuncios
+        (
+            titulo, texto, preco, categoria, sub_categoria
+        )
+        VALUES (?,?,?,?,?)
+        """,
+        (titulo, anuncio, preco, categoria, sb_categoria)
+    )
+    con.commit(), print("Gravado.")
+    desconecta_db()
 
 
 root = Tk()
@@ -55,6 +83,7 @@ ttk.Label(mainframe, text = "Descrição do anúncio").grid(column=1, row=3, sti
 t = Text(mainframe, width=40, height=10)
 t.grid(column=1, row=4, sticky=(W, E))
 contents = t.get('1.0', 'end')
+
 
 
 #texto = StringVar()
