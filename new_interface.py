@@ -38,8 +38,44 @@ class Functions():
         self.codigo_entry.delete(0, END)
         self.tit_entry.delete(0, END)
         self.preco_entry.delete(0, END)
-        self.texto_entry.delete('1.0', 'end-1c')        
-    def buscar(self):
+        self.texto_entry.delete('1.0', 'end-1c')    
+
+    def add_cliente(self):
+        self.titulo = self.tit_entry.get()
+        self.anuncio = self.texto_entry.get('1.0', 'end-1c')
+        self.preco = self.preco_entry.get()
+        self.categoria = self.category_box.get()
+        self.sub_categoria = self.sub_category_box.get()
+        self.conecta_bd()
+        self.cursor.execute(
+            """
+            INSERT INTO anuncios
+            (
+                titulo, texto, preco, categoria, sub_categoria
+            )
+            VALUES (?,?,?,?,?)
+            """,
+            (self.titulo, self.anuncio, self.preco, self.categoria, self.sub_categoria)
+        )
+        self.conn.commit(), print("Gravado.")
+        self.desconecta_bd()
+        self.select_lista()
+        self.limpa_tela()
+
+    def select_lista(self):
+        self.listacli.delete(*self.listacli.get_children())
+        self.conecta_bd()
+        lista = self.cursor.execute(
+            """
+            SELECT titulo, texto, preco, categoria, sub_categoria
+            FROM anuncios
+            ORDER BY titulo ASC    
+            """
+        )
+        for i in lista:
+            self.listacli.insert("", END, values=i)
+        self.desconecta_bd()
+
         pass
     def novo(self):
         pass
@@ -55,8 +91,10 @@ class App(Functions):
         self.frames_da_tela()
         self.criando_botoes()
         self.label_entries()
+        self.combobox()
         self.tree_view()
         self.monta_tabelas()
+        self.select_lista()
         root.mainloop()
     
     def tela(self):
@@ -81,7 +119,7 @@ class App(Functions):
         self.bt_busca = Button(self.frame_1, text = 'Buscar',  bd = 3, bg="#107db2", fg= 'white', font=('arial', 10, 'bold'))
         self.bt_busca.place(relx=0.3, rely=0.1, relwidth=0.1, relheight=0.15)
          ## criação dos botao novo
-        self.bt_novo = Button(self.frame_1, text = 'Novo',  bd = 3, bg="#107db2", fg= 'white', font=('arial', 10, 'bold'))
+        self.bt_novo = Button(self.frame_1, text = 'Novo',  bd = 3, bg="#107db2", fg= 'white', font=('arial', 10, 'bold'), command=self.add_cliente)
         self.bt_novo.place(relx=0.5, rely=0.1, relwidth=0.1, relheight=0.15)
          ## criação dos botao alterar
         self.bt_alterar = Button(self.frame_1, text = 'Alterar',  bd = 3, bg="#107db2", fg= 'white', font=('arial', 10, 'bold'))
@@ -118,26 +156,54 @@ class App(Functions):
 
         self.texto_entry = Text(self.frame_1,height=2, width=50) 
         self.texto_entry.place(relx=0.15, rely=0.5, relwidth=0.7)
+    
+    def pick_category(self):
+        pass
 
     def combobox(self):
-        pass
+        self.category = Label(self.frame_1, text="Categoria", bg='lightgray')
+        self.category.place(relx=0.05, rely=0.7) 
+
+        categories = ["Imóveis", "Música e hobbies", "Esporte e lazer"]
+
+        self.category_box = ttk.Combobox(self.frame_1, value= categories) 
+        self.category_box.place(relx=0.15, rely=0.7, relwidth=0.16)
+        self.category_box.current(0)
+        self.category_box.state(['readonly'])
+        self.category_box.bind('<<ComboboxSelected>>', self.pick_category)
+
+
+        self.sub_category = Label(self.frame_1, text="Sub-Categoria", bg='lightgray')
+        self.sub_category.place(relx=0.34, rely=0.7) 
+
+        sub_categories = ["Imóveis", "Música e hobbies", "Esporte e lazer"]
+
+        self.sub_category_box = ttk.Combobox(self.frame_1, value= sub_categories) 
+        self.sub_category_box.place(relx=0.47, rely=0.7, relwidth=0.16)
+        self.sub_category_box.current(0)
+        self.sub_category_box.state(['readonly'])
+        self.sub_category_box.bind('<<ComboboxSelected>>', self.pick_category)
      
     def tree_view(self):
-        self.listacli = ttk.Treeview(self.frame_2, height=3, columns=('col1', 'col2','col3', 'col4'), show='headings')
+        self.listacli = ttk.Treeview(self.frame_2, height=3, columns=('col1', 'col2','col3', 'col4', 'col5', 'col6'), show='tree headings')
 
         # Nome de cada coluna
-        self.listacli.heading("#0", text="")
+        self.listacli.heading("#0", text="zero")
         self.listacli.heading("#1", text="Código")
         self.listacli.heading("#2", text="Titulo")
         self.listacli.heading("#3", text="Preço")
         self.listacli.heading("#4", text="Texto")
+        self.listacli.heading("#5", text="Categoria")
+        self.listacli.heading("#6", text="Subcategoria")
 
         # Tamanho de cada coluna
-        self.listacli.column('#0', width=1) # Faz com que a primeira coluna não apareça no treeview , stretch=NO
-        self.listacli.column('#1', width=50)
-        self.listacli.column('#2', width=200)
-        self.listacli.column('#3', width=125)
-        self.listacli.column('#4', width=125)
+        self.listacli.column('#0', width=25) # Faz com que a primeira coluna não apareça no treeview , stretch=NO
+        self.listacli.column('#1', width=25)
+        self.listacli.column('#2', width=100)
+        self.listacli.column('#3', width=100)
+        self.listacli.column('#4', width=100)
+        self.listacli.column('#5', width=100)
+        self.listacli.column('#6', width=50)
 
         # Posição do widget no frame
         self.listacli.place(relx=0.01, rely=0.01, relheight=0.85, relwidth=0.97)
