@@ -67,7 +67,7 @@ class Functions():
         self.conecta_bd()
         lista = self.cursor.execute(
             """
-            SELECT titulo, texto, preco, categoria, sub_categoria
+            SELECT cod,titulo, texto, preco, categoria, sub_categoria
             FROM anuncios
             ORDER BY titulo ASC    
             """
@@ -185,7 +185,7 @@ class App(Functions):
         self.sub_category_box.bind('<<ComboboxSelected>>', self.pick_category)
      
     def tree_view(self):
-        self.listacli = ttk.Treeview(self.frame_2, height=3, columns=('col1', 'col2','col3', 'col4', 'col5', 'col6'), show='tree headings')
+        self.listacli = ttk.Treeview(self.frame_2, height=3, columns=('col1', 'col2','col3', 'col4', 'col5', 'col6'), show='headings')
 
         # Nome de cada coluna
         self.listacli.heading("#0", text="zero")
