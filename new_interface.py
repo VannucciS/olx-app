@@ -39,23 +39,26 @@ class Functions():
         self.tit_entry.delete(0, END)
         self.preco_entry.delete(0, END)
         self.texto_entry.delete('1.0', 'end-1c')    
-
-    def add_cliente(self):
+    def variaveis(self):
+        self.codigo = self.codigo_entry.get()
         self.titulo = self.tit_entry.get()
         self.anuncio = self.texto_entry.get('1.0', 'end-1c')
         self.preco = self.preco_entry.get()
         self.categoria = self.category_box.get()
         self.sub_categoria = self.sub_category_box.get()
+
+    def add_cliente(self):
+        self.variaveis()
         self.conecta_bd()
         self.cursor.execute(
             """
             INSERT INTO anuncios
             (
-                titulo, texto, preco, categoria, sub_categoria
+                titulo, preco, texto, categoria, sub_categoria
             )
             VALUES (?,?,?,?,?)
             """,
-            (self.titulo, self.anuncio, self.preco, self.categoria, self.sub_categoria)
+            (self.titulo,  self.preco, self.anuncio, self.categoria, self.sub_categoria)
         )
         self.conn.commit(), print("Gravado.")
         self.desconecta_bd()
@@ -67,7 +70,7 @@ class Functions():
         self.conecta_bd()
         lista = self.cursor.execute(
             """
-            SELECT cod,titulo, texto, preco, categoria, sub_categoria
+            SELECT cod,titulo, preco, texto, categoria, sub_categoria
             FROM anuncios
             ORDER BY titulo ASC    
             """
@@ -79,10 +82,51 @@ class Functions():
         pass
     def novo(self):
         pass
-    def alterar(self):
-        pass
-    def apagar(self):
-        pass
+    
+  
+    def duplo_click(self, event):
+        self.limpa_tela()
+        self.listacli.selection()
+
+        for n in self.listacli.selection():
+            col1, col2,col3, col4, col5, col6 = self.listacli.item(n, 'values')
+            self.codigo_entry.insert(END, col1)
+            self.tit_entry.insert(END, col2)
+            self.preco_entry.insert(END, col3)
+            self.texto_entry.insert(END, col4)
+            self.category_box.insert(END, col5)
+            self.sub_category_box.insert(END, col6)
+
+    def deleta_anuncio(self):
+        self.variaveis()
+        self.conecta_bd()
+        self.cursor.execute(
+            """
+            DELETE FROM anuncios
+            WHERE cod = ?            
+            """,            
+            (self.codigo)
+        )
+        self.conn.commit()
+        self.desconecta_bd()
+        self.limpa_tela()
+        self.select_lista()
+
+    def altera_anuncio(self):
+        self.variaveis()
+        self.conecta_bd()
+        self.cursor.execute(
+            """
+            UPDATE anuncios
+            SET titulo = ?, preco = ?, texto = ?, categoria = ?, sub_categoria = ?
+            WHERE cod = ?
+            """ ,  (self.titulo, self.preco, self.anuncio, self.categoria, self.sub_categoria, self.codigo)
+        )
+        self.conn.commit()
+        self.desconecta_bd()
+        self.select_lista()
+        self.limpa_tela()
+
 
 class App(Functions):
     def __init__(self) :
@@ -122,10 +166,10 @@ class App(Functions):
         self.bt_novo = Button(self.frame_1, text = 'Novo',  bd = 3, bg="#107db2", fg= 'white', font=('arial', 10, 'bold'), command=self.add_cliente)
         self.bt_novo.place(relx=0.5, rely=0.1, relwidth=0.1, relheight=0.15)
          ## criação dos botao alterar
-        self.bt_alterar = Button(self.frame_1, text = 'Alterar',  bd = 3, bg="#107db2", fg= 'white', font=('arial', 10, 'bold'))
+        self.bt_alterar = Button(self.frame_1, text = 'Alterar',  bd = 3, bg="#107db2", fg= 'white', font=('arial', 10, 'bold'), command=self.altera_anuncio)
         self.bt_alterar.place(relx=0.6, rely=0.1, relwidth=0.1, relheight=0.15)
          ## criação dos botao apagar
-        self.bt_apagar = Button(self.frame_1, text = 'Apagar',  bd = 3, bg="#107db2", fg= 'white', font=('arial', 10, 'bold'))
+        self.bt_apagar = Button(self.frame_1, text = 'Apagar',  bd = 3, bg="#107db2", fg= 'white', font=('arial', 10, 'bold'), command=self.deleta_anuncio)
         self.bt_apagar.place(relx=0.7, rely=0.1, relwidth=0.1, relheight=0.15)
 
     def label_entries(self):
@@ -212,6 +256,8 @@ class App(Functions):
         self.scrollbar = Scrollbar(self.frame_2, orient='vertical', command=self.listacli.yview)
         self.listacli.configure(yscroll=self.scrollbar.set)
         self.scrollbar.place(relx=0.98, rely=0.01, relwidth=0.04, relheight=0.85)
+        self.listacli.bind("<Double-1>", self.duplo_click)
 
+    
 App()
 
