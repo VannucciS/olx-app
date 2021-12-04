@@ -1,5 +1,7 @@
 from tkinter import *
 from tkinter import ttk
+from tkinter import filedialog
+from PIL import ImageTk, Image
 import sqlite3
 
 root = Tk()
@@ -127,7 +129,11 @@ class Functions():
         self.select_lista()
         self.limpa_tela()
 
-
+    def fotos(self, event):
+        self.frame_1.filename = filedialog.askopenfilename(initialdir = "/", title = "Selecione a imagem", filetypes=( ('jpg files', '*.jpg'),('png files', '*.png')))
+        #self.filename,event = 
+        self.imagem = ImageTk.PhotoImage(Image.open(self.frame_1.filename))
+        #self.imagem_label = Label(image=self.imagem).place(relx=0.05, rely=0.65, relwidth=0.06)
 class App(Functions):
     def __init__(self) :
         self.root = root
@@ -139,6 +145,7 @@ class App(Functions):
         self.tree_view()
         self.monta_tabelas()
         self.select_lista()
+        self.menus()        
         root.mainloop()
     
     def tela(self):
@@ -151,9 +158,9 @@ class App(Functions):
 
     def frames_da_tela(self):
         self.frame_1 = Frame(self.root, bd=4, bg='lightgray', highlightbackground='white', highlightthickness=2)
-        self.frame_1.place(relx=0.02, rely=0.02, relwidth=0.96, relheight=0.46)
+        self.frame_1.place(relx=0.02, rely=0.02, relwidth=0.96, relheight=0.66)
         self.frame_2 = Frame(self.root, bd=4, bg='lightgray', highlightbackground='white', highlightthickness=2)
-        self.frame_2.place(relx=0.02, rely=0.5, relwidth=0.96, relheight=0.46)
+        self.frame_2.place(relx=0.02, rely=0.7, relwidth=0.96, relheight=0.26)
 
     def criando_botoes(self):
         ## criação dos botao limpar
@@ -171,6 +178,21 @@ class App(Functions):
          ## criação dos botao apagar
         self.bt_apagar = Button(self.frame_1, text = 'Apagar',  bd = 3, bg="#107db2", fg= 'white', font=('arial', 10, 'bold'), command=self.deleta_anuncio)
         self.bt_apagar.place(relx=0.7, rely=0.1, relwidth=0.1, relheight=0.15)
+        ## Criação dos botões de exibição, cópia de fotos
+        self.foto1 = Button(self.frame_1, text = 'Foto1', bd = 3, bg="#107db2", fg= 'white',font=('arial', 8, 'bold'), command=lambda: self.fotos(1))
+        self.foto1.place(relx=0.05, rely=0.85, relwidth=0.06)#, relwidth=0.1, relheight=0.15)
+
+        self.foto2 = Button(self.frame_1, text = 'Foto2', bd = 3, bg="#107db2", fg= 'white',font=('arial', 8, 'bold'), command=self.fotos)
+        self.foto2.place(relx=0.12, rely=0.85, relwidth=0.06)#, relwidth=0.1, relheight=0.15)
+
+        self.foto3 = Button(self.frame_1, text = 'Foto3', bd = 3, bg="#107db2", fg= 'white',font=('arial', 8, 'bold'), command=self.fotos)
+        self.foto3.place(relx=0.19, rely=0.85, relwidth=0.06)#, relwidth=0.1, relheight=0.15)
+
+        self.foto4 = Button(self.frame_1, text = 'Foto4', bd = 3, bg="#107db2", fg= 'white',font=('arial', 8, 'bold'), command=self.fotos)
+        self.foto4.place(relx=0.26, rely=0.85, relwidth=0.06)#, relwidth=0.1, relheight=0.15)
+
+        self.foto4 = Button(self.frame_1, text = 'Foto5', bd = 3, bg="#107db2", fg= 'white',font=('arial', 8, 'bold'), command=self.fotos)
+        self.foto4.place(relx=0.33, rely=0.85, relwidth=0.06)#, relwidth=0.1, relheight=0.15)
 
     def label_entries(self):
         ## criação label e entrada código
@@ -258,6 +280,29 @@ class App(Functions):
         self.scrollbar.place(relx=0.98, rely=0.01, relwidth=0.04, relheight=0.85)
         self.listacli.bind("<Double-1>", self.duplo_click)
 
+    def menus(self):
+        menubar = Menu(self.root)
+        self.root.config(menu = menubar)
+        filemenu = Menu(menubar)
+        filemenu2 = Menu(menubar)
+
+        def quit(): self.root.destroy()
+
+        menubar.add_cascade(label = 'Opções', menu = filemenu)
+        menubar.add_cascade(label = 'Sobre', menu = filemenu2)
+
+        filemenu.add_command(label='Sair', command=quit)
+        filemenu.add_command(label='Limpa Cliente', command=self.limpa_tela)
+        filemenu.add_command(label='Cadastrar usuário', command=self.limpa_tela)
+        filemenu.add_command(label='Enviar anuncios para OLX', command=self.limpa_tela)
+        filemenu2.add_command(label='Saiba mais', command=self.limpa_tela)
     
+    
+        
+
+
+
+
+
 App()
 
