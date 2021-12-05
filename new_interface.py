@@ -5,7 +5,7 @@ from PIL import ImageTk, Image
 import sqlite3
 
 root = Tk()
-
+global foto
 class Functions():
     def conecta_bd(self):
         self.conn = sqlite3.connect("anuncios.bd")
@@ -40,7 +40,13 @@ class Functions():
         self.codigo_entry.delete(0, END)
         self.tit_entry.delete(0, END)
         self.preco_entry.delete(0, END)
-        self.texto_entry.delete('1.0', 'end-1c')    
+        self.texto_entry.delete('1.0', 'end-1c')
+        #self.e1.destroy('all')   
+        for w in self.frame_1.winfo_children():
+            print(w) 
+            if w == '.!frame.!label7':
+                print("achei!") 
+
     def variaveis(self):
         self.codigo = self.codigo_entry.get()
         self.titulo = self.tit_entry.get()
@@ -129,11 +135,45 @@ class Functions():
         self.select_lista()
         self.limpa_tela()
 
-    def fotos(self, event):
-        self.frame_1.filename = filedialog.askopenfilename(initialdir = "/", title = "Selecione a imagem", filetypes=( ('jpg files', '*.jpg'),('png files', '*.png')))
-        #self.filename,event = 
-        self.imagem = ImageTk.PhotoImage(Image.open(self.frame_1.filename))
-        #self.imagem_label = Label(image=self.imagem).place(relx=0.05, rely=0.65, relwidth=0.06)
+    def foto(self, event, position):
+        self.types = [('jpg files', '*.jpg'),('png files', '*.png')]        
+        self.frame_1.filename = filedialog.askopenfilename(initialdir = "/", title = "Selecione a imagem", filetypes=(self.types), multiple = False)
+        self.filename = self.frame_1.filename
+        print(self.filename)
+        self.event = Image.open(self.frame_1.filename).resize((50,50))
+        #self.event = self.event.resize(100,50) 
+        self.event = ImageTk.PhotoImage(self.event)        
+        self.event  = Label(image=self.event).place(relx=position , rely=0.55, relwidth=0.06) # imagem_label 
+        
+    
+    def fotos(self):
+        # https://www.youtube.com/watch?v=ndUuy_55jho - open multiple images 
+        self.types = [('jpg files', '*.jpg'),('png files', '*.png')]        
+        self.filename = filedialog.askopenfilename(initialdir = "/", title = "Selecione até 5 imagens", filetypes=(self.types), multiple = True)
+        #self.frame_1.filename = filedialog.askopenfilename(initialdir = "/", title = "Selecione a imagem", filetypes=(self.types), multiple = True)
+        self.filename = self.filename
+        #self.filename = self.frame_1.filename
+        if len(self.filename) < 6:
+            self.filename = self.filename
+        else:
+            self.filename =()
+            print('Quantidade de fotos excedida.')
+        position = 0.19
+        for f in self.filename:
+            # https://www.plus2net.com/python/tkinter-filedialog-upload-display.php
+            print(f)
+            self.foto = Image.open(f)
+            self.foto = self.foto.resize((50,50))
+            self.foto = ImageTk.PhotoImage(self.foto)   
+            #self.foto = Label(self.frame_1, image=self.foto)
+            self.e1 = Label(self.frame_1)
+            self.e1.place(relx=position , rely=0.8, relwidth=0.06)
+            self.e1.image = self.foto
+            self.e1['image'] = self.foto
+            #self.foto.place(relx=position , rely=0.8, relwidth=0.06)
+            position = position + 0.1
+
+
 class App(Functions):
     def __init__(self) :
         self.root = root
@@ -179,11 +219,11 @@ class App(Functions):
         self.bt_apagar = Button(self.frame_1, text = 'Apagar',  bd = 3, bg="#107db2", fg= 'white', font=('arial', 10, 'bold'), command=self.deleta_anuncio)
         self.bt_apagar.place(relx=0.7, rely=0.1, relwidth=0.1, relheight=0.15)
         ## Criação dos botões de exibição, cópia de fotos
-        self.foto1 = Button(self.frame_1, text = 'Foto1', bd = 3, bg="#107db2", fg= 'white',font=('arial', 8, 'bold'), command=lambda: self.fotos(1))
+        self.foto1 = Button(self.frame_1, text = 'Fotos', bd = 3, bg="#107db2", fg= 'white',font=('arial', 8, 'bold'), command=self.fotos)
         self.foto1.place(relx=0.05, rely=0.85, relwidth=0.06)#, relwidth=0.1, relheight=0.15)
 
-        self.foto2 = Button(self.frame_1, text = 'Foto2', bd = 3, bg="#107db2", fg= 'white',font=('arial', 8, 'bold'), command=self.fotos)
-        self.foto2.place(relx=0.12, rely=0.85, relwidth=0.06)#, relwidth=0.1, relheight=0.15)
+        """self.foto2 = Button(self.frame_1, text = 'Foto2', bd = 3, bg="#107db2", fg= 'white',font=('arial', 8, 'bold'), command=lambda: self.foto(2, 0.5))
+        self.foto2.place(relx=0.33, rely=0.85, relwidth=0.06)#, relwidth=0.1, relheight=0.15)
 
         self.foto3 = Button(self.frame_1, text = 'Foto3', bd = 3, bg="#107db2", fg= 'white',font=('arial', 8, 'bold'), command=self.fotos)
         self.foto3.place(relx=0.19, rely=0.85, relwidth=0.06)#, relwidth=0.1, relheight=0.15)
@@ -192,7 +232,7 @@ class App(Functions):
         self.foto4.place(relx=0.26, rely=0.85, relwidth=0.06)#, relwidth=0.1, relheight=0.15)
 
         self.foto4 = Button(self.frame_1, text = 'Foto5', bd = 3, bg="#107db2", fg= 'white',font=('arial', 8, 'bold'), command=self.fotos)
-        self.foto4.place(relx=0.33, rely=0.85, relwidth=0.06)#, relwidth=0.1, relheight=0.15)
+        self.foto4.place(relx=0.33, rely=0.85, relwidth=0.06)#, relwidth=0.1, relheight=0.15)"""
 
     def label_entries(self):
         ## criação label e entrada código
