@@ -26,11 +26,7 @@ class Functions():
         preco INTEGER(8),
         categoria CHAR(30),
         sub_categoria CHAR(30),
-        foto1 CHAR(200),
-        foto2 CHAR(200),
-        foto3 CHAR(200),
-        foto4 CHAR(200),
-        foto5 CHAR(200)
+        fotos TEXT(200)
         );
     """)
         self.conn.commit(); print("BD criado")
@@ -42,10 +38,10 @@ class Functions():
         self.preco_entry.delete(0, END)
         self.texto_entry.delete('1.0', 'end-1c')
         #self.e1.destroy('all')   
-        for w in self.frame_1.winfo_children():
-            print(w) 
-            if w == '.!frame.!label7':
-                print("achei!") 
+        for i in range(len(self.frame_1.winfo_children())):             
+            if i> 17:
+                print(self.frame_1.winfo_children()[i])
+                self.frame_1.winfo_children()[i].destroy()
 
     def variaveis(self):
         self.codigo = self.codigo_entry.get()
@@ -54,6 +50,8 @@ class Functions():
         self.preco = self.preco_entry.get()
         self.categoria = self.category_box.get()
         self.sub_categoria = self.sub_category_box.get()
+        self.fotos = str(self.filename)
+        print(self.fotos)
 
     def add_cliente(self):
         self.variaveis()
@@ -62,11 +60,11 @@ class Functions():
             """
             INSERT INTO anuncios
             (
-                titulo, preco, texto, categoria, sub_categoria
+                titulo, preco, texto, categoria, sub_categoria, fotos
             )
-            VALUES (?,?,?,?,?)
+            VALUES (?,?,?,?,?,?)
             """,
-            (self.titulo,  self.preco, self.anuncio, self.categoria, self.sub_categoria)
+            (self.titulo,  self.preco, self.anuncio, self.categoria, self.sub_categoria, self.fotos)
         )
         self.conn.commit(), print("Gravado.")
         self.desconecta_bd()
@@ -85,12 +83,7 @@ class Functions():
         )
         for i in lista:
             self.listacli.insert("", END, values=i)
-        self.desconecta_bd()
-
-        pass
-    def novo(self):
-        pass
-    
+        self.desconecta_bd()           
   
     def duplo_click(self, event):
         self.limpa_tela()
@@ -219,8 +212,8 @@ class App(Functions):
         self.bt_apagar = Button(self.frame_1, text = 'Apagar',  bd = 3, bg="#107db2", fg= 'white', font=('arial', 10, 'bold'), command=self.deleta_anuncio)
         self.bt_apagar.place(relx=0.7, rely=0.1, relwidth=0.1, relheight=0.15)
         ## Criação dos botões de exibição, cópia de fotos
-        self.foto1 = Button(self.frame_1, text = 'Fotos', bd = 3, bg="#107db2", fg= 'white',font=('arial', 8, 'bold'), command=self.fotos)
-        self.foto1.place(relx=0.05, rely=0.85, relwidth=0.06)#, relwidth=0.1, relheight=0.15)
+        self.fotos = Button(self.frame_1, text = 'Fotos', bd = 3, bg="#107db2", fg= 'white',font=('arial', 8, 'bold'), command=self.fotos)
+        self.fotos.place(relx=0.05, rely=0.85, relwidth=0.06)#, relwidth=0.1, relheight=0.15)
 
         """self.foto2 = Button(self.frame_1, text = 'Foto2', bd = 3, bg="#107db2", fg= 'white',font=('arial', 8, 'bold'), command=lambda: self.foto(2, 0.5))
         self.foto2.place(relx=0.33, rely=0.85, relwidth=0.06)#, relwidth=0.1, relheight=0.15)
