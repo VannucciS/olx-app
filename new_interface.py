@@ -26,7 +26,8 @@ class Functions():
         preco INTEGER(8),
         categoria CHAR(30),
         sub_categoria CHAR(30),
-        fotos TEXT(200)
+        fotos TEXT(200),
+        publicar INTEGER(1) NOT NULL
         );
     """)
         self.conn.commit(); print("BD criado")
@@ -36,8 +37,7 @@ class Functions():
         self.codigo_entry.delete(0, END)
         self.tit_entry.delete(0, END)
         self.preco_entry.delete(0, END)
-        self.texto_entry.delete('1.0', 'end-1c')
-        #self.e1.destroy('all')   
+        self.texto_entry.delete('1.0', 'end-1c')        
         for i in range(len(self.frame_1.winfo_children())):             
             if i> 17:
                 print(self.frame_1.winfo_children()[i])
@@ -51,6 +51,7 @@ class Functions():
         self.categoria = self.category_box.get()
         self.sub_categoria = self.sub_category_box.get()
         self.fotos = str(self.filename)
+        self.publicar = self.publicar.get()
         print(self.fotos)
 
     def add_cliente(self):
@@ -60,11 +61,11 @@ class Functions():
             """
             INSERT INTO anuncios
             (
-                titulo, preco, texto, categoria, sub_categoria, fotos
+                titulo, preco, texto, categoria, sub_categoria, fotos, publicar
             )
-            VALUES (?,?,?,?,?,?)
+            VALUES (?,?,?,?,?,?,?)
             """,
-            (self.titulo,  self.preco, self.anuncio, self.categoria, self.sub_categoria, self.fotos)
+            (self.titulo,  self.preco, self.anuncio, self.categoria, self.sub_categoria, self.fotos, self.publicar)
         )
         self.conn.commit(), print("Gravado.")
         self.desconecta_bd()
@@ -214,6 +215,10 @@ class App(Functions):
         ## Criação dos botões de exibição, cópia de fotos
         self.fotos = Button(self.frame_1, text = 'Fotos', bd = 3, bg="#107db2", fg= 'white',font=('arial', 8, 'bold'), command=self.fotos)
         self.fotos.place(relx=0.05, rely=0.85, relwidth=0.06)#, relwidth=0.1, relheight=0.15)
+        ##  Criação do checkbutton de publicação do anúncio
+        self.publicar = IntVar()
+        self.publica = Checkbutton(self.frame_1, text='Publicar', bg='lightgray', onvalue=1, offvalue=0, variable= self.publicar)
+        self.publica.place(relx=0.7, rely=0.85, relwidth=0.15)#, relwidth=0.1, relheight=0.15)
 
         """self.foto2 = Button(self.frame_1, text = 'Foto2', bd = 3, bg="#107db2", fg= 'white',font=('arial', 8, 'bold'), command=lambda: self.foto(2, 0.5))
         self.foto2.place(relx=0.33, rely=0.85, relwidth=0.06)#, relwidth=0.1, relheight=0.15)
@@ -256,28 +261,38 @@ class App(Functions):
         self.texto_entry = Text(self.frame_1,height=2, width=50) 
         self.texto_entry.place(relx=0.15, rely=0.5, relwidth=0.7)
     
-    def pick_category(self):
-        pass
+    def pick_category(self, event):
+        
+        self.cat_imoveis = ['Apartamentos', 'Casas', 'Aluguel de quartos', 'Temporada', 'Terrenos, sítios e fazendas','Comércio e indústria']
+        self.cat_esporte = ['Esportes e ginástica','Ciclismo']
+        self.cat_hobbie = ['Instrumentos musicais','CDs, DVDs etc','Livros e revistas','Antiguidades','Hobbies e coleções']
+
+        if self.category_box .get() == 'Imóveis':
+           self.sub_category_box.config(value = self.cat_imoveis)
+           #self.sub_category_box.current(0)
+        if self.category_box .get() == "Música e hobbies":
+           self.sub_category_box.config(value = self.cat_hobbie)
+           #self.sub_category_box.current(0)
+        if self.category_box .get() == "Esporte e lazer":
+           self.sub_category_box.config(value = self.cat_esporte)
+           #self.sub_category_box.current(0)
 
     def combobox(self):
+        self.categories = ["Imóveis", "Música e hobbies", "Esporte e lazer"]
+
         self.category = Label(self.frame_1, text="Categoria", bg='lightgray')
-        self.category.place(relx=0.05, rely=0.7) 
+        self.category.place(relx=0.05, rely=0.7)         
 
-        categories = ["Imóveis", "Música e hobbies", "Esporte e lazer"]
-
-        self.category_box = ttk.Combobox(self.frame_1, value= categories) 
+        self.category_box = ttk.Combobox(self.frame_1, value= self.categories) 
         self.category_box.place(relx=0.15, rely=0.7, relwidth=0.16)
         self.category_box.current(0)
         self.category_box.state(['readonly'])
         self.category_box.bind('<<ComboboxSelected>>', self.pick_category)
 
-
         self.sub_category = Label(self.frame_1, text="Sub-Categoria", bg='lightgray')
         self.sub_category.place(relx=0.34, rely=0.7) 
-
-        sub_categories = ["Imóveis", "Música e hobbies", "Esporte e lazer"]
-
-        self.sub_category_box = ttk.Combobox(self.frame_1, value= sub_categories) 
+        
+        self.sub_category_box = ttk.Combobox(self.frame_1, value= [" "]) 
         self.sub_category_box.place(relx=0.47, rely=0.7, relwidth=0.16)
         self.sub_category_box.current(0)
         self.sub_category_box.state(['readonly'])
